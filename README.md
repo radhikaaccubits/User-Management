@@ -12,7 +12,7 @@ Create an environment with python3.10 and use pip to install the required packag
 ```bash
 $ git clone https://github.com/radhikaaccubits/User-Management.git
 $ cd User-Managment/core
-$ pip install -r requirement.txt
+$ pip install -r requirements.txt
 ```
 
 
