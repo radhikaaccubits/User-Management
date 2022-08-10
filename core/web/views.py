@@ -1,15 +1,12 @@
-import profile
-from django.shortcuts import HttpResponse
+from django.contrib import messages
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views import generic, View
 from django.views.generic import UpdateView
-from django.contrib import messages
-from django.contrib.auth.models import User
-from django.http import JsonResponse
-
-from .models import UserProfile
 from web import models
 from web.forms import CreateProfileForm, CreateUserForm
+
+from .models import UserProfile
 
 
 # Create your views here.

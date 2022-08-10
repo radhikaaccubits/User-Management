@@ -1,13 +1,7 @@
-from typing import Any
 from django import forms
-from django.core import validators
-from django.forms import ModelForm
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
-from django.urls import reverse_lazy
-from .models import UserProfile
 from django.contrib.auth.models import User
-from django.forms.models import formset_factory
+
+from .models import UserProfile
 
 
 def validpin(value):

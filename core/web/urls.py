@@ -1,6 +1,5 @@
 from django.urls import path
 
-from web.forms import CreateProfileForm, CreateUserForm
 from . import views
 
 urlpatterns = [
