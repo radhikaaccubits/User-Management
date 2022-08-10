@@ -1,12 +1,12 @@
-from django.urls import  path
+from django.urls import path
 
-from web.forms import CreateProfileForm,CreateUserForm
+from web.forms import CreateProfileForm, CreateUserForm
 from . import views
 
-urlpatterns  = [
+urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
     path('create/', views.CreateUser.as_view(), name='create'),
     path('delete/', views.DeleteView.as_view(), name='delete'),
     path('update/<int:post_id>', views.UpdateView.as_view(), name='update'),
-    
+
 ]
