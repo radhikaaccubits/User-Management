@@ -34,7 +34,34 @@ class CreateUserForm(forms.ModelForm):
         super(CreateUserForm, self).__init__(*args, **kwargs)
         self.fields['first_name'].required = True
         self.fields['last_name'].required = True
+        self.fields['email'].required = True
 
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'username')
+        fields = ('first_name', 'last_name', 'username', "email")
+
+class UserRegistraionForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(UserRegistraionForm, self).__init__(*args, **kwargs)
+        self.fields['first_name'].required = True
+        self.fields['last_name'].required = True
+        self.fields['email'].required = True
+
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'username',"email", "password")
+
+
+class RamdomPasswordChangeForm(forms.Form):
+    old_password = forms.CharField(label='Old password', max_length=100, required=True, widget=forms.PasswordInput())
+    new_password = forms.CharField(label='New password', max_length=100, required=True, widget=forms.PasswordInput())
+    new_password_confirmation = forms.CharField(label='New password confirmation', max_length=100, required=True, widget=forms.PasswordInput())
+
+    class Meta:
+        fields = ('old_password', 'new_password', 'new_password_confirmation')
+        
+    def clean_new_password_confirmation(self):
+        if self.cleaned_data['new_password'] != self.cleaned_data['new_password_confirmation']:
+            raise forms.ValidationError("new password, confirmation must be same")
+        return self.cleaned_data['new_password_confirmation'] 
+

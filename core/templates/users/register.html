@@ -6,8 +6,8 @@
 {% block content %}
     <div class="row">
        <div class="col-md-6 offset-3">
-        <h4>Create User</h4><hr/>
-        <form action="{% url 'create' %}" method="POST">
+        <h4>Registration Page</h4><hr/>
+        <form action="{% url 'register' %}" method="POST">
             {% csrf_token %}
             {{userform|crispy }}
             {{profileform|crispy  }}
