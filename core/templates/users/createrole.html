@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <div class="row ">
+        <div class="col-sm">
+            
+        </div>
+
+        <div class="col-sm form-control">
+            <h1>Add Role</h1>
+            <form action="{% url 'role' %}" method="POST">
+                {% csrf_token %}
+                {{roleform|crispy }}
+
+                <div style="padding-bottom: 10px">
+
+                </div>
+                <input class="btn btn-success" type="submit" value="Add"></input>
+            </form>
+        </div>
+        <div class="col-sm">
+        </div>
+    </div>
+{% endblock %}

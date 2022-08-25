@@ -11,6 +11,13 @@ urlpatterns = [
     path('update/<int:post_id>', views.UpdateView.as_view(), name='update'),
     path('login/', views.UserLoginView.as_view(), name='login'),
     path('logout/', views.UserLogoutView.as_view(), name='logout'),
+    path('createrole/', views.CreateRole.as_view(), name='role'),
+    path('viewroles/', views.ViewRoles.as_view(), name='viewrole'),
+    path('viewusers/', views.ViewUsers.as_view(), name='viewuser'),
+    path('updaterole/<int:post_id>', views.UpdateRole.as_view(), name='updaterole'),
+    path('deleterole/', views.DeleteRole.as_view(), name='delrole'),
+    path('managerole/', views.ManageRole.as_view(), name='managerole'),
+    path('ajax/load-managers/', views.load_managers, name='ajax_load_managers'),
     
     #password-change
     path('password-change/', 

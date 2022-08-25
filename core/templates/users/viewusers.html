@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="p-4"></div>
+<div class="container form-control " style="width:800px;height:400px;">
+  <div class=" d-flex align-items-center justify-content-center " style="width:800px;height:400px">
+    {% if user_list %}
+    <ul class="tree">
+      {% load mptt_tags %}
+      {% recursetree user_list %}
+      <li> <a>{{ node }} {{node.user.last_name}}</a>
+        {% if not node.is_leaf_node %}
+        <ul>
+          {{children}}
+        </ul>
+        {% endif %}
+      </li>
+      {% endrecursetree %}
+    </ul>
+
+    {% else %}
+    <h1>No records found</h1>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

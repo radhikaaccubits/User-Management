@@ -1,20 +1,23 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
-{{error}}
 
 {% block content %}
-<div class="row">
-
-    <div class="col-md-6 offset-3">
-        <h4>Update User Details</h4><hr/>
+    <div class="row">
+        <h4>Update User</h4>
         <form class="form" action="{% url 'update' post_id %}" method="post">
             {% csrf_token %}                  
+
             {{ userform|crispy }}
             {{ profileform|crispy  }}
-            <button type="submit" class="btn btn-primary mt-3" >Update</button>
+            <div style="padding-bottom: 10px">
+
+            </div>
+            
+             
+              <button type="submit" class="btn btn-primary" >Update</button>
         </form>
+        
     </div>
-
-</div>
-
 {% endblock %}
+
+
