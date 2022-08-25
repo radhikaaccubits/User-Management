@@ -1,5 +1,6 @@
-from django.urls import  path
+from django.urls import  path,include
 from . import views
+from .views import load_managers
 
 urlpatterns  = [
     path('', views.IndexView.as_view(), name='index'),
@@ -7,9 +8,13 @@ urlpatterns  = [
     path('delete/', views.DeleteView.as_view(), name='delete'),
     path('createrole/', views.CreateRole.as_view(), name='role'),
     path('viewroles/', views.ViewRoles.as_view(), name='viewrole'),
+    path('viewusers/', views.ViewUsers.as_view(), name='viewuser'),
     path('updaterole/<int:post_id>', views.UpdateRole.as_view(), name='updaterole'),
     path('deleterole/', views.DeleteRole.as_view(), name='delrole'),
     path('managerole/', views.ManageRole.as_view(), name='managerole'),
     path('update/<int:post_id>', views.UpdateView.as_view(), name='update'),
+    path('ajax/load-managers/', views.load_managers, name='ajax_load_managers'),
+    
+    
     
 ]
