@@ -22,28 +22,33 @@
           <table class="display" id="tbldata" style="width:100%">
             <thead>
               <tr>
-                <th>Parent</th>
                 <th>Roles</th>
+                <th>Parent</th>
+                
                 <th>Action</th>
               </tr>
             </thead>
             <tbody>
               {% if role_list %}
               {% for i in role_list %}
+              {% if i.is_active == True %}
               <tr>
-                <td>{{i.parent}}</td>
                 <td>{{i.role}}</td>
+                <td>{{i.parent}}</td>
+                
                 <td>
                   <a href="{% url 'updaterole' i.id %}" class="btn btn-warning">Update</a>
                   <input type="submit" data="{{i.id}}" class="btn btn-danger deleterole" value="Delete"></input>
                 </td>
               </tr>
+              {%endif%}
               {% endfor %}
               {% else %}
               <tr>
                 <td colspan="5">No records found</td>
               </tr>
               {% endif %}
+
             </tbody>
           </table>
         </div>

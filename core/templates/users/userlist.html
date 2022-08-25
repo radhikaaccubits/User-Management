@@ -11,12 +11,14 @@
 </head>
 
 <body>
+
   <div class="container">
     <div class="row">
       <div class="col-sm-12">
         <h2 class="display-6 ">All Users</h2>
         <a href="{% url 'create' %}" class="btn btn-success">Create User</a>
         <a href="{% url 'managerole' %}" class="btn btn-success">Role Management</a>
+        <a href="{% url 'viewuser' %}" class="btn btn-success">User Hierarchy</a>
         <hr>
         <div class="table-responsive mt-3">
           <table class="display" id="tbldata" style="width:100%">
@@ -30,12 +32,15 @@
                 <th>Pincode</th>
                 <th>Contact</th>
                 <th>Role</th>
+                <th>Manager</th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody>
+
               {% if object_list %}
               {% for post in object_list %}
+
               {% if post.user.is_active == True %}
               <tr>
                 <td>{{ post.id }}</td>
@@ -45,7 +50,11 @@
                 <td>{{ post.address }}</td>
                 <td>{{ post.pincode }}</td>
                 <td>{{ post.contact }}</td>
-                <td>{{ post.role }}</td>
+                <td>
+                  {{ post.role }}</td>
+                <td>
+                  {{ post.manager.first_name }} {{ post.manager.last_name }}
+                </td>
                 <td>
                   <a href="{% url 'update' post.id %}" class="btn btn-warning">Update</a>
                   <input type="submit" data="{{post.id}}" class="btn btn-danger delete" value="Delete"></input>
@@ -54,6 +63,7 @@
               </tr>
               {% endif %}
               {% endfor %}
+
 
               {% else %}
               <tr>
