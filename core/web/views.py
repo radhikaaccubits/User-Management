@@ -85,6 +85,8 @@ class CreateUser(LoginRequiredMixin, View):
             test=profile.manager_id
             profile.parent_id=test
             profile.save()
+            my_group = Group.objects.get(name=profile.role) 
+            my_group.user_set.add(profile.user)
             # send credentials email
             thread = threading.Thread(target=self.send_registraion_mail, args=(user.id, username, password, email))
             thread.start()
@@ -110,12 +112,18 @@ class UpdateView(LoginRequiredMixin, UpdateView):
     def post(self,request,post_id):
         req = request.POST
         post =models.UserProfile.objects.get(id=post_id)
+        prev_group=Group.objects.get(name=post.role) 
         profile_form = CreateProfileForm(request.POST, instance=post)
         user_form = CreateUserForm(request.POST, instance=post.user)
         if user_form.is_valid() and profile_form.is_valid():
-            
+            profile=profile_form.save(commit=False)
+            user=user_form.save(commit=False)
+            profile.user = user
             profile_form.save()
             user_form.save()
+            prev_group.user_set.remove(profile.user)
+            my_group = Group.objects.get(name=profile.role) 
+            my_group.user_set.add(profile.user)
         else:
             return render(request,'users/update.html',{'profileform': profile_form,'userform': user_form,'post_id': post.id,})
         messages.success(request, 'The record was saved successfully')
