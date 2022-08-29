@@ -17,8 +17,16 @@ class UserProfile(MPTTModel):
     role=models.ForeignKey(Roles, on_delete=models.CASCADE)
     manager=models.ForeignKey(User,related_name='manager', on_delete=models.CASCADE,null=True)
     parent=TreeForeignKey('self', on_delete=models.CASCADE,null=True, blank=True, related_name='children')
-    def __str__(self):
-        return self.user.first_name
+    def save(self, *args, **kwargs):
+        if self.manager_id:
+            a=UserProfile.objects.values('id').get(user_id=self.manager_id)['id']
+        
+            print(a)
+            self.parent_id= a
+
+        super(UserProfile, self).save(*args, **kwargs)
+    # def __str__(self):
+    #     return self.user.first_name
     
     
     
