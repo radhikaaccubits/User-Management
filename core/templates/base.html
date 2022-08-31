@@ -27,7 +27,6 @@
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                       <li><a class="dropdown-item"  href="{% url "index" %}" >Users</a></li>
-                      <li><a class="dropdown-item"  href="{% url "managerole" %}">Roles</a></li>
                       <li><a class="dropdown-item"  href="{% url 'viewuser' %}" >User Hierarchy</a></li>
                     </ul>
                   </li>
@@ -38,13 +37,16 @@
                       Roles
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                      <li><a class="dropdown-item"  href="{% url 'viewuser' %}" >User Hierarchy</a></li>
-                      <li><a class="dropdown-item"  href="{% url 'managerole' %}" >Role Management</a></li>
+                      <li><a class="dropdown-item"  href="{% url "managerole" %}">Roles</a></li>
+                      <li><a class="dropdown-item"  href="#" >Role Hierarchy</a></li>
                     </ul>
                   </li>
+                  <li class="nav-item">
+                    <a class="nav-link"  href="{% url 'managerole' %}" >Role Management</a>
+                  </li>
                 </ul>
-                
                 <ul class="navbar-nav ms-auto">
+
                   <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                       <b>{{request.user|capfirst}}</b>
