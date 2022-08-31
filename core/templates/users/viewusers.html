@@ -7,7 +7,7 @@
     <ul class="tree">
       {% load mptt_tags %}
       {% recursetree user_list %}
-      <li> <a>{{ node }} {{node.user.last_name}}</a>
+      <li> <a>{{ node.user.first_name }} {{node.user.last_name}}</a>
         {% if not node.is_leaf_node %}
         <ul>
           {{children}}

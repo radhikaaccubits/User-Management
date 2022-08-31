@@ -78,13 +78,16 @@ class CreateUser(LoginRequiredMixin, View):
         password = uuid.uuid4().hex[:8]
         if profileform.is_valid() and userform.is_valid():
             profile = profileform.save(commit=False)
-            user = userform.save()
+            user = userform.save(commit=False)
             user.set_password(password)
             user.save()
             profile.user = user
             test=profile.manager_id
-            profile.parent_id=test
+        
+            #profile.parent_id=test
             profile.save()
+            my_group = Group.objects.get(name=profile.role) 
+            my_group.user_set.add(profile.user)
             # send credentials email
             thread = threading.Thread(target=self.send_registraion_mail, args=(user.id, username, password, email))
             thread.start()
@@ -110,12 +113,18 @@ class UpdateView(LoginRequiredMixin, UpdateView):
     def post(self,request,post_id):
         req = request.POST
         post =models.UserProfile.objects.get(id=post_id)
+        prev_group=Group.objects.get(name=post.role) 
         profile_form = CreateProfileForm(request.POST, instance=post)
         user_form = CreateUserForm(request.POST, instance=post.user)
         if user_form.is_valid() and profile_form.is_valid():
-            
+            profile=profile_form.save(commit=False)
+            user=user_form.save(commit=False)
+            profile.user = user
             profile_form.save()
             user_form.save()
+            prev_group.user_set.remove(profile.user)
+            my_group = Group.objects.get(name=profile.role) 
+            my_group.user_set.add(profile.user)
         else:
             return render(request,'users/update.html',{'profileform': profile_form,'userform': user_form,'post_id': post.id,})
         messages.success(request, 'The record was saved successfully')
@@ -191,10 +200,12 @@ class UpdateRole(UpdateView):
 class ViewRoles(View):
      def get(self, request, *args, **kwargs):
         role_list=models.Roles.objects.all()
+        
         return render(request, 'users/viewrole.html', {'role_list':role_list,})
 class ViewUsers(View):
      def get(self, request, *args, **kwargs):
         user_list=models.UserProfile.objects.all().filter(user__is_active=True)
+      
         return render(request, 'users/viewusers.html', {'user_list':user_list,})
     
 class DeleteRole(View):
@@ -238,5 +249,6 @@ def load_managers(request):
         role_id = request.GET.get('roleid')
         parent_role = models.Roles.objects.filter(id=role_id).values('parent_id')
 
-        users_with_parent_role=models.UserProfile.objects.filter(role_id__in=parent_role,user__is_active=True).values('id', 'user__first_name', 'user__last_name',)
+        users_with_parent_role1=models.UserProfile.objects.filter(role_id__in=parent_role,user__is_active=True).values('user_id')
+        users_with_parent_role=models.User.objects.filter(id__in=users_with_parent_role1,is_active=True).values('id','first_name','last_name','username')
         return render(request, 'users/managers.html', {'users':users_with_parent_role})

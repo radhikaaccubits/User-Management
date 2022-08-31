@@ -50,8 +50,8 @@ class CreateProfileForm(forms.ModelForm):
             print(parent_role)
             print(UserProfile.objects.filter(role_id__in=parent_role).values('user__first_name'))
             print(UserProfile.objects.filter(role_id__in=parent_role).values('user_id'))
-            a = UserProfile.objects.filter(role_id__in=parent_role).values('user_id')
-            self.fields['manager'].queryset = User.objects.filter(id__in=a)
+            a = UserProfile.objects.filter(role_id__in=parent_role,user__is_active=True).values('user_id')
+            self.fields['manager'].queryset = User.objects.filter(id__in=a,is_active=True)
             
             print(User.objects.filter(id__in=a))
 
