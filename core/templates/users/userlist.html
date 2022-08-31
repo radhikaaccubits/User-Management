@@ -4,9 +4,9 @@
   <div class="row">
       <div class="col-sm-12">
           <h4>All Users</h4><hr/>
-          <a href="{% url 'create' %}" class="btn btn-success" >Create User</a>
-          <a href="{% url 'managerole' %}" class="btn btn-success">Role Management</a>
-          <a href="{% url 'viewuser' %}" class="btn btn-success">User Hierarchy</a>
+          <div class="d-flex justify-content-end">
+              <a href="{% url 'create' %}" class="btn btn-success" style="margin-right:5px">Create User</a>
+          </div>
           <div class="table-responsive mt-3">
               <table class="display" id="tbldata" style="width:100%">
                 <thead>
