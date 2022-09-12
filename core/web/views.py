@@ -5,7 +5,7 @@ from django.views import generic, View
 from django.views.generic import UpdateView
 from django import forms
 from web import models
-from web.forms import CreateProfileForm, CreateUserForm, RamdomPasswordChangeForm,Rolesform, SubscibersForm
+from web.forms import CreateProfileForm, CreateUserForm, RamdomPasswordChangeForm,Rolesform
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.mail import send_mail
