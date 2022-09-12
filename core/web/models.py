@@ -1,3 +1,4 @@
+from uuid import uuid4
 from django.db import models
 from django.contrib.auth.models import User
 from mptt.models import MPTTModel, TreeForeignKey
@@ -17,6 +18,8 @@ class UserProfile(MPTTModel):
     role=models.ForeignKey(Roles, on_delete=models.CASCADE)
     manager=models.ForeignKey(User,related_name='manager', on_delete=models.CASCADE,null=True)
     parent=TreeForeignKey('self', on_delete=models.CASCADE,null=True, blank=True, related_name='children')
+    token = models.CharField(max_length=256, null=True, blank=True)
+    token_status = models.BooleanField(default=False)
     def save(self, *args, **kwargs):
         if self.manager_id:
             a=UserProfile.objects.values('id').get(user_id=self.manager_id)['id']
