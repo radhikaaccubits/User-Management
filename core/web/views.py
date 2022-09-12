@@ -5,7 +5,7 @@ from django.views import generic, View
 from django.views.generic import UpdateView
 from django import forms
 from web import models
-from web.forms import CreateProfileForm, CreateUserForm, RamdomPasswordChangeForm,Rolesform
+from web.forms import CreateProfileForm, CreateUserForm, RamdomPasswordChangeForm,Rolesform, SubscibersForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.mail import send_mail
@@ -15,6 +15,8 @@ from django.template.loader import render_to_string
 
 from .models import UserProfile, Roles
 from django.contrib.auth.models import Group,Permission
+from rest_framework import viewsets
+from .serializers import role_serializer,userprofile_serializer
 
 
 # Create your views here.
@@ -100,7 +102,6 @@ class CreateUser(LoginRequiredMixin, View):
 class UpdateView(LoginRequiredMixin, UpdateView):
     def get(self,request, *args, **kwargs):
         post = UserProfile.objects.get(id=kwargs.get('post_id'))
-        print(post)
         userform = CreateUserForm(instance=post.user)
         profileform = CreateProfileForm(instance=post)
         
@@ -252,3 +253,27 @@ def load_managers(request):
         users_with_parent_role1=models.UserProfile.objects.filter(role_id__in=parent_role,user__is_active=True).values('user_id')
         users_with_parent_role=models.User.objects.filter(id__in=users_with_parent_role1,is_active=True).values('id','first_name','last_name','username')
         return render(request, 'users/managers.html', {'users':users_with_parent_role})
+
+
+class role_viewset(viewsets.ModelViewSet):
+    queryset=Roles.objects.all()
+    serializer_class=role_serializer
+
+class userprofile_viewset(viewsets.ModelViewSet):
+    queryset=UserProfile.objects.filter(user__is_active=True)
+    serializer_class=userprofile_serializer
+
+class Newsletter(View):
+    # def post(self,request):
+    #     if request.method == 'POST':
+    #         form = SubscibersForm(request.POST)
+    #         if form.is_valid():
+    #             form.save()
+    #             messages.success(request, 'Subscription Successful')
+    #             return redirect('/')
+    def get(self,request):
+        form = SubscibersForm()
+        context = {
+            'form': form,
+        }
+        return render(request, 'users/newsletter.html', context)
