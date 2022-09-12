@@ -1,4 +1,5 @@
-from django.urls import path
+from django.urls import path,include
+from .router import router
 
 from . import views
 from django.contrib.auth import views as auth_views
@@ -18,6 +19,8 @@ urlpatterns = [
     path('deleterole/', views.DeleteRole.as_view(), name='delrole'),
     path('managerole/', views.ManageRole.as_view(), name='managerole'),
     path('ajax/load-managers/', views.load_managers, name='ajax_load_managers'),
+    path('api/',include(router.urls)),
+    path('newsletter/', views.Newsletter.as_view(), name='newsletter'),
     
     #password-change
     path('password-change/', 

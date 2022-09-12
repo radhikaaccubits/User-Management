@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'web',
     'mptt',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -152,10 +153,3 @@ EMAIL_HOST = env("EMAIL_HOST")
 EMAIL_HOST_USER = env("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 EMAIL_PORT = env("EMAIL_PORT")
-
-
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
-}
