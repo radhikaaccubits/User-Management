@@ -12,7 +12,6 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.template.loader import render_to_string
-
 from .models import UserProfile, Roles
 from django.contrib.auth.models import Group,Permission
 from rest_framework import viewsets
@@ -23,8 +22,8 @@ from .serializers import role_serializer,userprofile_serializer
 
 class IndexView(LoginRequiredMixin, generic.TemplateView):
     def get(self, request, *args, **kwargs):
-        users = models.UserProfile.objects.all()
-        role_list=models.Roles.objects.all()
+        users = UserProfile.objects.all()
+        role_list=Roles.objects.all()
         return render(request, 'users/userlist.html', {'object_list': users,'test':role_list})
 
 class UserLoginView(View):
@@ -88,8 +87,8 @@ class CreateUser(LoginRequiredMixin, View):
         
             #profile.parent_id=test
             profile.save()
-            my_group = Group.objects.get(name=profile.role) 
-            my_group.user_set.add(profile.user)
+            # my_group = Group.objects.get(name=profile.role) 
+            # my_group.user_set.add(profile.user)
             # send credentials email
             thread = threading.Thread(target=self.send_registraion_mail, args=(user.id, username, password, email))
             thread.start()
@@ -113,8 +112,8 @@ class UpdateView(LoginRequiredMixin, UpdateView):
     
     def post(self,request,post_id):
         req = request.POST
-        post =models.UserProfile.objects.get(id=post_id)
-        prev_group=Group.objects.get(name=post.role) 
+        post =UserProfile.objects.get(id=post_id)
+        # prev_group=Group.objects.get(name=post.role) 
         profile_form = CreateProfileForm(request.POST, instance=post)
         user_form = CreateUserForm(request.POST, instance=post.user)
         if user_form.is_valid() and profile_form.is_valid():
@@ -123,9 +122,9 @@ class UpdateView(LoginRequiredMixin, UpdateView):
             profile.user = user
             profile_form.save()
             user_form.save()
-            prev_group.user_set.remove(profile.user)
-            my_group = Group.objects.get(name=profile.role) 
-            my_group.user_set.add(profile.user)
+            # prev_group.user_set.remove(profile.user)
+            # my_group = Group.objects.get(name=profile.role) 
+            # my_group.user_set.add(profile.user)
         else:
             return render(request,'users/update.html',{'profileform': profile_form,'userform': user_form,'post_id': post.id,})
         messages.success(request, 'The record was saved successfully')
@@ -143,7 +142,7 @@ class DeleteView(LoginRequiredMixin, View):
             post.user.save()
             post.save()
             data = {"success":"True"}
-            messages.success(request, 'The record was deleted successfully')
+            
         else:
             data = {"success":"True"}
             messages.success(request, 'The User is reporting manager to another user')
@@ -170,12 +169,12 @@ class RandomPasswordChangeView(View):
                 return render(request, "users/random_password_change.html",{"form":form})
         else:
             return render(request, "users/random_password_change.html",{"form":form})
-class ManageRole(View):
+class ManageRole(LoginRequiredMixin,View):
     def get(self, request, *args, **kwargs):
-        role_list=models.Roles.objects.all()
+        role_list=Roles.objects.all()
         return render(request, 'users/managerole.html', {'role_list':role_list,})
 
-class UpdateRole(UpdateView):
+class UpdateRole(LoginRequiredMixin,View):
     def get(self,request, *args, **kwargs):
         post = Roles.objects.get(id=kwargs.get('post_id'))
         roleform= Rolesform(instance=post)
@@ -185,36 +184,39 @@ class UpdateRole(UpdateView):
         return render(request, 'users/updaterole.html',context )
     def post(self,request,post_id):
         req = request.POST
-        post =models.Roles.objects.get(id=post_id)
-        update_group=Group.objects.get(name=post)
+        post =Roles.objects.get(id=post_id)
+        # update_group=Group.objects.get(name=post)
         role_form = Rolesform(request.POST, instance=post)
+        
+        
         if role_form.is_valid():
-            new_group_name=role_form.cleaned_data['role']
-            update_group.name=new_group_name
-            update_group.save()
+            # new_group_name=role_form.cleaned_data['role']
+            # update_group.name=new_group_name
+            # update_group.save()
             role_form.save()
         else:
             return render(request,'users/updaterole.html',{'roleform': role_form,'post_id': post.id,})
         messages.success(request, 'The record was saved successfully')
         return redirect('/managerole/')
 
-class ViewRoles(View):
+class ViewRoles(LoginRequiredMixin,View):
      def get(self, request, *args, **kwargs):
-        role_list=models.Roles.objects.all()
+        role_list=Roles.objects.filter(is_active=True)
         
         return render(request, 'users/viewrole.html', {'role_list':role_list,})
-class ViewUsers(View):
+class ViewUsers(LoginRequiredMixin,View):
      def get(self, request, *args, **kwargs):
-        user_list=models.UserProfile.objects.all().filter(user__is_active=True)
+        user_list=UserProfile.objects.all().filter(user__is_active=True)
       
         return render(request, 'users/viewusers.html', {'user_list':user_list,})
     
-class DeleteRole(View):
+class DeleteRole(LoginRequiredMixin,View):
     def post(self,request, *args, **kwargs):
         deleteid=request.POST.get('del')
         post = Roles.objects.get(id=deleteid)
         if not post.get_children():
-            role_assigned_to_user=UserProfile.objects.all().filter(role=post)
+            role_assigned_to_user=UserProfile.objects.filter(role=post).exists()
+            
             if not role_assigned_to_user:
                 post.is_active=False
                 post.save()
@@ -228,7 +230,7 @@ class DeleteRole(View):
         data = {"success":"True"}
         return JsonResponse(data)
 
-class CreateRole(View):
+class CreateRole(LoginRequiredMixin,View):
     def get(self,request):
         roleform = Rolesform(initial={'parent': 123})
         return render(request, 'users/createrole.html', {
@@ -248,10 +250,10 @@ class CreateRole(View):
 
 def load_managers(request):
         role_id = request.GET.get('roleid')
-        parent_role = models.Roles.objects.filter(id=role_id).values('parent_id')
+        parent_role = Roles.objects.filter(id=role_id).values('parent_id')
 
-        users_with_parent_role1=models.UserProfile.objects.filter(role_id__in=parent_role,user__is_active=True).values('user_id')
-        users_with_parent_role=models.User.objects.filter(id__in=users_with_parent_role1,is_active=True).values('id','first_name','last_name','username')
+        users_with_parent_role1=UserProfile.objects.filter(role_id__in=parent_role,user__is_active=True).values('user_id')
+        users_with_parent_role=User.objects.filter(id__in=users_with_parent_role1,is_active=True).values('id','first_name','last_name','username')
         return render(request, 'users/managers.html', {'users':users_with_parent_role})
 
 
@@ -263,17 +265,4 @@ class userprofile_viewset(viewsets.ModelViewSet):
     queryset=UserProfile.objects.filter(user__is_active=True)
     serializer_class=userprofile_serializer
 
-class Newsletter(View):
-    # def post(self,request):
-    #     if request.method == 'POST':
-    #         form = SubscibersForm(request.POST)
-    #         if form.is_valid():
-    #             form.save()
-    #             messages.success(request, 'Subscription Successful')
-    #             return redirect('/')
-    def get(self,request):
-        form = SubscibersForm()
-        context = {
-            'form': form,
-        }
-        return render(request, 'users/newsletter.html', context)
+
