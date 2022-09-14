@@ -2,22 +2,20 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-    <div class="row">
-        <h4>Update User</h4>
-        <form class="form" action="{% url 'update' post_id %}" method="post">
-            {% csrf_token %}                  
+<div class="row">
+    <h4>Update User</h4>
+    <form class="form" action="{% url 'update' post_id %}" method="post">
+        {% csrf_token %}
 
-            {{ userform|crispy }}
-            {{ profileform|crispy  }}
-            <div style="padding-bottom: 10px">
+        {{ userform|crispy }}
+        {{ profileform|crispy }}
+        <div style="padding-bottom: 10px">
 
-            </div>
-            
-             
-              <button type="submit" class="btn btn-primary" >Update</button>
-        </form>
-        
-    </div>
+        </div>
+
+
+        <button type="submit" class="btn btn-primary">Update</button>
+    </form>
+
+</div>
 {% endblock %}
-
-

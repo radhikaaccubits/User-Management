@@ -1,98 +1,121 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="row">
-      <div class="col-sm-12">
-          <h4>All Users</h4><hr/>
-          <div class="d-flex justify-content-end">
-              <a href="{% url 'create' %}" class="btn btn-success" style="margin-right:5px">Create User</a>
-          </div>
-          <div class="table-responsive mt-3">
-              <table class="display" id="tbldata" style="width:100%">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Username</th>
-                    <th>Address</th>
-                    <th>Pincode</th>
-                    <th>Contact</th>
-                    <th>Role</th>
-                    <th>Manager</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% if object_list %}
-                      {% for post in object_list %}
-                        {% if post.user.is_active == True %}
-                          <tr>
-                              <td>{{ post.id }}</td>
-                              <td>{{ post.user.first_name}}</td>
-                              <td>{{ post.user.last_name}}</td>
-                              <td>{{ post.user.username }}</td>
-                              <td>{{ post.address }}</td>
-                              <td>{{ post.pincode }}</td>
-                              <td>{{ post.contact }}</td>
-                              <td>
-                                {{ post.role }}</td>
-                              <td>
-                                {{ post.manager.first_name }} {{ post.manager.last_name }}
-                              </td>
-                              <td>
-                                <a href="{% url 'update' post.id %}" class="btn btn-warning">Update</a>
-                                <input type="submit" data="{{post.id}}" class="btn btn-danger delete" value="Delete"></input>
-                                </td>
-                          </tr>
-                        {% endif %}
-                      {% endfor %}
-                  {% else %}
-                      <tr>
-                          <td colspan="5">No records found</td>
-                      </tr>
-                  {% endif %}
-                </tbody>
-              </table>
-            </div>
-          
-      </div>
+<div class="row">
+  <div class="col-sm-12">
+    <h4>All Users</h4>
+    <hr />
+    <div class="d-flex justify-content-end">
+      <a href="{% url 'create' %}" class="btn btn-success" style="margin-right:5px">Create User</a>
+    </div>
+    <div class="table-responsive mt-3">
+      <table class="display" id="tbldata" style="width:100%">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Username</th>
+            <th>Address</th>
+            <th>Pincode</th>
+            <th>Contact</th>
+            <th>Role</th>
+            <th>Manager</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if object_list %}
+          {% for post in object_list %}
+          {% if post.user.is_active == True %}
+          <tr>
+            <td>{{ post.id }}</td>
+            <td>{{ post.user.first_name}}</td>
+            <td>{{ post.user.last_name}}</td>
+            <td>{{ post.user.username }}</td>
+            <td>{{ post.address }}</td>
+            <td>{{ post.pincode }}</td>
+            <td>{{ post.contact }}</td>
+            <td>
+              {{ post.role }}</td>
+            <td>
+              {{ post.manager.first_name }} {{ post.manager.last_name }}
+            </td>
+            <td>
+              <a href="{% url 'update' post.id %}" class="btn btn-warning">Update</a>
+              <input type="submit" data="{{post.id}}" class="btn btn-danger delete" value="Delete"></input>
+            </td>
+          </tr>
+          {% endif %}
+          {% endfor %}
+          {% else %}
+          <tr>
+            <td colspan="5">No records found</td>
+          </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+
   </div>
+</div>
 {% endblock %}
 
 {% block javascript %}
-  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
-  <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-pQQkAEnwaBkjpqZ8RU1fF1AKtTcHJwFl3pblpTlHXybJjHpMYo79HY3hIi4NKxyj" crossorigin="anonymous"></script>
-  <script>
-    {% for msg in messages %}
-      swal('{{msg}}');
-    {% endfor %}
-  </script>
-  <script>
-      $(document).ready(function () {
-              $('#tbldata').DataTable({
-                  pagingType: 'full_numbers',
-              });
-      });
-  </script>
-  <script>
-    function deletefunc(del){
-      $.ajax({
-        url:"{% url 'delete' %}" ,
-        data:{'del':del, 'csrfmiddlewaretoken': '{{csrf_token}}'},
-        method:'POST',
-        success: function(response) {
-          window.location="{% url 'index' %}"
-          },
-      })
-      }
-    $('.delete').click(function(){
-      var del=$(this).attr('data')
-      console.log(del)
-      deletefunc(del)
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+  integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+  crossorigin="anonymous"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.min.js"
+  integrity="sha384-pQQkAEnwaBkjpqZ8RU1fF1AKtTcHJwFl3pblpTlHXybJjHpMYo79HY3hIi4NKxyj" crossorigin="anonymous"></script>
+<script>
+  {% for msg in messages %}
+  swal('{{msg}}');
+  {% endfor %}
+</script>
+<script>
+  $(document).ready(function () {
+    $('#tbldata').DataTable({
+      pagingType: 'full_numbers',
+    });
+  });
+</script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  function deletefunc(del) {
+    $.ajax({
+      url: "{% url 'delete' %}",
+      data: { 'del': del, 'csrfmiddlewaretoken': '{{csrf_token}}' },
+      method: 'POST',
+      success: function (response) {
+        window.location = "{% url 'index' %}"
+      },
     })
-  </script>
+  }
+  $('.delete').click(function () {
+    var del = $(this).attr('data')
+    console.log(del)
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+
+      if (result.isConfirmed) {
+        deletefunc(del)
+        Swal.fire(
+          'Deleted!',
+          'User has been deleted.',
+          'success'
+        )
+      }
+    })
+
+  })
+</script>
 {% endblock %}
-  

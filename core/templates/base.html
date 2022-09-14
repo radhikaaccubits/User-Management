@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
@@ -14,7 +15,7 @@
     <!-- navbar section -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
-            <a class="navbar-brand" href="{% url "index" %}">User Management</a>
+            <a class="navbar-brand" href="{% url "index" %}">finalmergeapi</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
             </button>
@@ -40,10 +41,8 @@
                       <li><a class="dropdown-item"  href="{% url "managerole" %}">Roles</a></li>
                       <li><a class="dropdown-item"  href="{% url "viewrole" %}" >Role Hierarchy</a></li>
                     </ul>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link"  href="{% url 'managerole' %}" >Role Management</a>
-                  </li>
+                          </li>
+                  
                 </ul>
                 <ul class="navbar-nav ms-auto">
 
@@ -77,3 +76,4 @@
     <!-- javascript section end -->
 
 </body>
+
