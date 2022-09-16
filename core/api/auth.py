@@ -11,8 +11,9 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from web.models import UserProfile
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-class UserEndpoint(APIView):
+class UserEndpoint(LoginRequiredMixin,APIView):
     def get(self, request):
         users  = User.objects.all()
         serializer = UserSerializer(users, many=True)
@@ -43,31 +44,31 @@ class UserEndpoint(APIView):
             return Response(user_serializer.data)
 
 
-class UserDetailEndpoint(RetrieveUpdateDestroyAPIView):
+class UserDetailEndpoint(LoginRequiredMixin,RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     
-class ChangePasswordEndpoint(APIView):
+class ChangePasswordEndpoint(LoginRequiredMixin,APIView):
     def post(self, request, pk):
         try:
             user = User.objects.get(id=pk)
         except User.DoesNotExist:
-            raise ValidationError({"message":"please provide valid user id"})
+            raise ValidationError({"message":"Please provide valid user id"})
         if not user.check_password(request.data.get("old_password")):
-            raise ValidationError({"message":"please check your old_password."})
+            raise ValidationError({"message":"Please check your old password."})
         new_password = request.data.get("new_password")
         confirm_password = request.data.get("confirm_password")
         if confirm_password == new_password:
             # update password with hash
             user.set_password(new_password)
             user.save()
-            return Response({"message":"password change sucessfully completed"})
+            return Response({"message":"Password changed sucessfully"})
         else:
-            raise ValidationError({"message":"new_password, confirm_password must be same."})
+            raise ValidationError({"message":"New password and confirm password must be same."})
         
         
 
-class PasswordResetView(APIView):
+class PasswordResetView(LoginRequiredMixin,APIView):
 
     def post(self, request):
         import uuid
@@ -83,7 +84,7 @@ class PasswordResetView(APIView):
         return Response({"token": password_rest_token})
 
 
-class PasswordResetConfirmView(APIView):
+class PasswordResetConfirmView(LoginRequiredMixin,APIView):
     def post(self, request):
         try:
             token = request.data.get("token")
@@ -91,19 +92,19 @@ class PasswordResetConfirmView(APIView):
             confirm_password = request.data.get("confirm_password")
         except KeyError:
             return Response(
-                {"error": "missing required fields"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "Missing required fields"}, status=status.HTTP_400_BAD_REQUEST
             )
 
         try:
             user = User.objects.get(user__token=token, user__token_status=True)
             if new_password != confirm_password:
                 return Response(
-                    {"error": "new_password, confirm_password must be same"},
+                    {"error": "New password and confirm password must be same"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             if not new_password.strip() and not confirm_password.strip():
                 return Response(
-                    {"error": "new_password, confirm_password should not be empty"},
+                    {"error": "Password should not be empty"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -115,7 +116,7 @@ class PasswordResetConfirmView(APIView):
             profile = UserProfile.objects.get(user=user, token=token)
             profile.token_status = False
             profile.save()
-            return Response({"message": "your password has been updated successfully"})
+            return Response({"message": "Your password has been updated successfully"})
 
         except:
             return Response(

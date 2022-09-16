@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="alert alert-info">
+    Hey Thanks for your registration process check you credentials below.
+    <p><b>username</b> : {{username}}</p>
+    <p><b>password</b> : {{password}} </p>
+</div>
+<a href="{{domain}}/users/{{id}}/random-password-change/">change password here</a>
+{% endblock content %}

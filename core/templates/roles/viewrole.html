@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="p-4"></div>
+<div class="container form-control " style="width:800px;height:400px;">
+  <div class=" d-flex align-items-center justify-content-center " style="width:800px;height:400px">
+    {% if role_list %}
+    <ul class="tree">
+      {% load mptt_tags %}
+      {% recursetree role_list %}
+      <li> <a>{{ node.role }}</a>
+        {% if not node.is_leaf_node %}
+        <ul>
+          {{children}}
+        </ul>
+        {% endif %}
+      </li>
+      {% endrecursetree %}
+    </ul>
+
+    {% else %}
+    <h1>No records found</h1>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+{% block javascript %}
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+  integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+  crossorigin="anonymous"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.min.js"
+  integrity="sha384-pQQkAEnwaBkjpqZ8RU1fF1AKtTcHJwFl3pblpTlHXybJjHpMYo79HY3hIi4NKxyj" crossorigin="anonymous"></script>
+{% endblock %}
