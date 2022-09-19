@@ -1,8 +1,8 @@
 from django.contrib.auth.models import User
-from web.models import UserProfile
+from web.models import UserProfile, Roles
 
 from rest_framework import serializers
-
+from drf_writable_nested import WritableNestedModelSerializer
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
