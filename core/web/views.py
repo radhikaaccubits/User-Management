@@ -16,7 +16,6 @@ from django.template.loader import render_to_string
 from .models import UserProfile, Roles
 from django.contrib.auth.models import Group,Permission
 from rest_framework import viewsets
-from .serializers import role_serializer,userprofile_serializer
 from django.core.exceptions import ValidationError
 from django.http import Http404
 
@@ -285,13 +284,6 @@ def load_managers(request):
         return render(request, 'users/managers.html', {'users':users_with_parent_role})
 
 
-class role_viewset(LoginRequiredMixin,viewsets.ModelViewSet):
-    queryset=Roles.objects.all()
-    serializer_class=role_serializer
-
-class userprofile_viewset(LoginRequiredMixin,viewsets.ModelViewSet):
-    queryset=UserProfile.objects.filter(user__is_active=True)
-    serializer_class=userprofile_serializer
 
 
 
