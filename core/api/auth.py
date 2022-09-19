@@ -12,6 +12,26 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404
 from web.models import UserProfile
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework import viewsets
+from .serializers import Role_serializer, Userprofile_serializer
+from django.core.exceptions import ValidationError
+from django.http import Http404
+from web.models import UserProfile, Roles
+
+
+class Role_viewset(viewsets.ModelViewSet):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    queryset = Roles.objects.all()
+    serializer_class = Role_serializer
+
+
+class Userprofile_viewset(viewsets.ModelViewSet):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    queryset = UserProfile.objects.filter(user__is_active=True)
+    serializer_class = Userprofile_serializer
 
 class UserEndpoint(APIView):
     permission_classes = (IsAuthenticated,)
