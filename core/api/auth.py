@@ -11,8 +11,11 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from web.models import UserProfile
+from rest_framework.permissions import IsAuthenticated
 
 class UserEndpoint(APIView):
+    permission_classes = (IsAuthenticated,)
+    
     def get(self, request):
         users  = User.objects.all()
         serializer = UserSerializer(users, many=True)
@@ -48,6 +51,8 @@ class UserDetailEndpoint(RetrieveUpdateDestroyAPIView):
     serializer_class = UserSerializer
     
 class ChangePasswordEndpoint(APIView):
+    permission_classes = (IsAuthenticated,)
+    
     def post(self, request, pk):
         try:
             user = User.objects.get(id=pk)
