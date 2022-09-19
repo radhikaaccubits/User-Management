@@ -2,7 +2,8 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-from django.urls import path
+from django.urls import path, include
+from api.router import router
 from .auth import UserEndpoint, UserDetailEndpoint, ChangePasswordEndpoint, PasswordResetView,PasswordResetConfirmView
 
 from rest_framework import permissions
@@ -25,6 +26,7 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
+    path('', include(router.urls)),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('users/', UserEndpoint.as_view(), name='users'),
