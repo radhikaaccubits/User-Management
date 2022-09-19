@@ -15,7 +15,6 @@ class role_serializer(serializers.ModelSerializer):
         else:
             return value
  
-        
     class Meta:
         model=Roles
         fields=('id','role','parent')
@@ -25,10 +24,6 @@ class role_serializer(serializers.ModelSerializer):
         rep['parent'] = role_serializer(instance.parent).data['role']
         return rep
    
-
-
-
-
 class user1_serializer(serializers.ModelSerializer):
     class Meta:
         model=User
@@ -46,7 +41,6 @@ class userprofile_serializer(WritableNestedModelSerializer,serializers.ModelSeri
         else:
             return value
 
-
     def validate_contact(self,value):
         if len(str(value)) != 10:
             raise serializers.ValidationError(' 10 characters is required')
@@ -54,12 +48,9 @@ class userprofile_serializer(WritableNestedModelSerializer,serializers.ModelSeri
             return value
     class Meta:
         model=UserProfile
-
         fields=('id','user','address','pincode','contact','role','manager')
     def to_representation(self, instance):
         rep = super().to_representation(instance)
-        
-
         rep['role'] = role_serializer(instance.role).data['role']
         return rep
         

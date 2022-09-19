@@ -49,6 +49,7 @@ class UserEndpoint(APIView):
 class UserDetailEndpoint(RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = (IsAuthenticated,)
     
 class ChangePasswordEndpoint(APIView):
     permission_classes = (IsAuthenticated,)
@@ -57,18 +58,18 @@ class ChangePasswordEndpoint(APIView):
         try:
             user = User.objects.get(id=pk)
         except User.DoesNotExist:
-            raise ValidationError({"message":"please provide valid user id"})
+            raise ValidationError({"message":"Please provide valid user id"})
         if not user.check_password(request.data.get("old_password")):
-            raise ValidationError({"message":"please check your old_password."})
+            raise ValidationError({"message":"Please check your old password."})
         new_password = request.data.get("new_password")
         confirm_password = request.data.get("confirm_password")
         if confirm_password == new_password:
             # update password with hash
             user.set_password(new_password)
             user.save()
-            return Response({"message":"password change sucessfully completed"})
+            return Response({"message":"Password changed sucessfully"})
         else:
-            raise ValidationError({"message":"new_password, confirm_password must be same."})
+            raise ValidationError({"message":"New password and confirm password must be same."})
         
         
 
@@ -96,19 +97,19 @@ class PasswordResetConfirmView(APIView):
             confirm_password = request.data.get("confirm_password")
         except KeyError:
             return Response(
-                {"error": "missing required fields"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "Missing required fields"}, status=status.HTTP_400_BAD_REQUEST
             )
 
         try:
             user = User.objects.get(user__token=token, user__token_status=True)
             if new_password != confirm_password:
                 return Response(
-                    {"error": "new_password, confirm_password must be same"},
+                    {"error": "New password and confirm password must be same"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             if not new_password.strip() and not confirm_password.strip():
                 return Response(
-                    {"error": "new_password, confirm_password should not be empty"},
+                    {"error": "Password should not be empty"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -120,7 +121,7 @@ class PasswordResetConfirmView(APIView):
             profile = UserProfile.objects.get(user=user, token=token)
             profile.token_status = False
             profile.save()
-            return Response({"message": "your password has been updated successfully"})
+            return Response({"message": "Your password has been updated successfully"})
 
         except:
             return Response(

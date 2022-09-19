@@ -4,16 +4,17 @@
 {{error}}
 
 {% block content %}
-    <div class="row">
-       <div class="col-md-6 offset-3">
-        <h4>Registration Page</h4><hr/>
+<div class="row">
+    <div class="col-md-6 offset-3">
+        <h4>Registration Page</h4>
+        <hr />
         <form action="{% url 'register' %}" method="POST">
             {% csrf_token %}
             {{userform|crispy }}
-            {{profileform|crispy  }}
+            {{profileform|crispy }}
             <input class="btn btn-success mt-3" type="submit" value="Register" />
         </form>
-       </div>
     </div>
+</div>
 
 {% endblock %}
