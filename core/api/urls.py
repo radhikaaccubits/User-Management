@@ -27,7 +27,7 @@ urlpatterns = [
     
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('role/', Roleviewset.as_view({'get': 'list',"post": "create"}), name='role'),
+    path('role/', Roleviewset.as_view({'get': 'list',"post": "create"}), name='roles'),
     path('role/<int:pk>', Roleviewset.as_view({'get': 'retrieve','put': 'update','delete': 'destroy'}), name='role_id'),
     path('user/', Userprofileviewset.as_view({'get': 'list',"post": "create"}), name='user'),
     path('user/<int:pk>', Userprofileviewset.as_view({'get': 'retrieve','put': 'update','delete': 'destroy'}), name='user_id'),
