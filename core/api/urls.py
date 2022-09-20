@@ -29,11 +29,11 @@ urlpatterns = [
     path('', include(router.urls)),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('users/', UserEndpoint.as_view(), name='users'),
+    path('users/', UserEndpoint.as_view({"get":"list","post":"create"}), name='users'),
     path('users/<int:pk>', UserDetailEndpoint.as_view(), name='users_details'),
-    path('users/<int:pk>/change-password/', ChangePasswordEndpoint.as_view(), name='change_password'),
-    path('password-reset/', PasswordResetView.as_view(), name='api_password_reset'),
-    path('password-reset/confirm/', PasswordResetConfirmView.as_view(), name='api_password_reset_confirm'),
+    path('users/<int:pk>/change-password/', ChangePasswordEndpoint.as_view({"post":"create"}), name='change_password'),
+    path('password-reset/', PasswordResetView.as_view({"post":"create"}), name='api_password_reset'),
+    path('password-reset/confirm/', PasswordResetConfirmView.as_view({"post":"create"}), name='api_password_reset_confirm'),
     # docs api
     path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 ]

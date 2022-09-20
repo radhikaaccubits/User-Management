@@ -18,7 +18,7 @@ from .serializers import Role_serializer, Userprofile_serializer
 from django.core.exceptions import ValidationError
 from django.http import Http404
 from web.models import UserProfile, Roles
-
+from rest_framework.viewsets import ViewSet
 
 class Role_viewset(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
@@ -33,10 +33,10 @@ class Userprofile_viewset(viewsets.ModelViewSet):
     queryset = UserProfile.objects.filter(user__is_active=True)
     serializer_class = Userprofile_serializer
 
-class UserEndpoint(APIView):
+class UserEndpoint(ViewSet):
     permission_classes = (IsAuthenticated,)
     
-    def get(self, request):
+    def list(self, request):
         users  = User.objects.all()
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
@@ -53,7 +53,7 @@ class UserEndpoint(APIView):
         message_body = render_to_string(template, context)
         send_mail(subject, message_body, settings.EMAIL_HOST_USER, [email],html_message=message_body)
     
-    def post(self, request):
+    def create(self, request):
         user_serializer = UserSerializer(data=request.data)
         profile_serializer = ProfileSerializer(data=request.data)
         if user_serializer.is_valid(raise_exception=True) and profile_serializer.is_valid(raise_exception=True):
@@ -71,10 +71,10 @@ class UserDetailEndpoint(RetrieveUpdateDestroyAPIView):
     serializer_class = UserSerializer
     permission_classes = (IsAuthenticated,)
     
-class ChangePasswordEndpoint(APIView):
+class ChangePasswordEndpoint(ViewSet):
     permission_classes = (IsAuthenticated,)
     
-    def post(self, request, pk):
+    def create(self, request, pk):
         try:
             user = User.objects.get(id=pk)
         except User.DoesNotExist:
@@ -93,9 +93,9 @@ class ChangePasswordEndpoint(APIView):
         
         
 
-class PasswordResetView(APIView):
+class PasswordResetView(ViewSet):
 
-    def post(self, request):
+    def create(self, request):
         import uuid
         
         email = request.data.get("email", None)
@@ -109,8 +109,8 @@ class PasswordResetView(APIView):
         return Response({"token": password_rest_token})
 
 
-class PasswordResetConfirmView(APIView):
-    def post(self, request):
+class PasswordResetConfirmView(ViewSet):
+    def create(self, request):
         try:
             token = request.data.get("token")
             new_password = request.data.get("new_password")
