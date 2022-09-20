@@ -1,23 +1,24 @@
 from django.contrib.auth.models import User
-from web.models import UserProfile, Roles
-
-from rest_framework import serializers
 from drf_writable_nested import WritableNestedModelSerializer
+from rest_framework import serializers
+from web.models import UserProfile, Roles
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("id","first_name", "last_name", "username", "email")
+        fields = ("id", "first_name", "last_name", "username", "email")
+
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
-        exclude = ("user","token","token_status")
-        
-class Role_serializer(serializers.ModelSerializer):
+        exclude = ("user", "token", "token_status")
+
+
+class Roleserializer(serializers.ModelSerializer):
     def validate(self, value):
-        a = Roles.objects.filter(role=value['role'])
-        if a:
+        roles = Roles.objects.filter(role=value['role'])
+        if roles:
             raise serializers.ValidationError("Role already exists")
         else:
             return value
@@ -28,20 +29,14 @@ class Role_serializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         rep = super().to_representation(instance)
-        rep['parent'] = Role_serializer(instance.parent).data['role']
+        rep['parent'] = Roleserializer(instance.parent).data['role']
         return rep
 
 
-class User1_serializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('first_name', 'last_name', 'username', 'email')
 
-class Userprofile_serializer(WritableNestedModelSerializer, serializers.ModelSerializer):
-    user = User1_serializer()
-
+class Userprofileserializer(WritableNestedModelSerializer, serializers.ModelSerializer):
+    user = UserSerializer()
     # choices=UserProfile.objects.all()
-
     # manager=serializers.ChoiceField(choices=choices)
     # role=role_serializer(read_only=True)
     def validate_pincode(self, value):
@@ -61,20 +56,20 @@ class Userprofile_serializer(WritableNestedModelSerializer, serializers.ModelSer
         role_id = self.initial_data.get('role')
         parent_role = Roles.objects.filter(id=role_id).values('parent_id')
 
-        users_with_parent_role1 = UserProfile.objects.filter(role_id__in=parent_role, user__is_active=True).values(
+        userprofile_with_parent_role = UserProfile.objects.filter(role_id__in=parent_role, user__is_active=True).values(
             'user_id')
-        users_with_parent_role = User.objects.filter(id__in=users_with_parent_role1, is_active=True).values('id',
+        users_with_parent_role = User.objects.filter(id__in=userprofile_with_parent_role, is_active=True).values('id',
                                                                                                             'first_name',
                                                                                                             'last_name',
                                                                                                             'username')
-        a = []
+        managers = []
         for i in users_with_parent_role:
-            a.append(i['username'])
+            managers.append(i['username'])
 
-        b = {"Please select from: ": a}
-        print(a)
-        if str(value) not in a:
-            raise serializers.ValidationError(b)
+        error = {"Please select from: ": managers}
+        
+        if str(value) not in managers:
+            raise serializers.ValidationError(error)
         else:
             return value
 
@@ -84,6 +79,5 @@ class Userprofile_serializer(WritableNestedModelSerializer, serializers.ModelSer
 
     def to_representation(self, instance):
         rep = super().to_representation(instance)
-        rep['role'] = Role_serializer(instance.role).data['role']
+        rep['role'] = Roleserializer(instance.role).data['role']
         return rep
-
