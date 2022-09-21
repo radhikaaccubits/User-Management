@@ -33,7 +33,7 @@ class UserLoginView(View):
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(username=username, password=password)
-        if user:
+        if user is not None:
             login(request, user)
             return redirect('index')
         else:
@@ -89,8 +89,8 @@ class CreateUser(LoginRequiredMixin, View):
 
             # profile.parent_id=test
             profile.save()
-            # my_group = Group.objects.get(name=profile.role) 
-            # my_group.user_set.add(profile.user)
+            my_group = Group.objects.get(name=profile.role) 
+            my_group.user_set.add(profile.user)
             # send credentials email
             thread = threading.Thread(target=self.send_registraion_mail,
                                       args=(user.id, username, password, email, request))
@@ -122,7 +122,7 @@ class UpdateView(LoginRequiredMixin, UpdateView):
             post = UserProfile.objects.get(id=kwargs.get('post_id'))
         except UserProfile.DoesNotExist:
             raise Http404
-        # prev_group=Group.objects.get(name=post.role) 
+        prev_group=Group.objects.get(name=post.role) 
         profile_form = CreateProfileForm(request.POST, instance=post)
         user_form = CreateUserForm(request.POST, instance=post.user)
         if user_form.is_valid() and profile_form.is_valid():
@@ -131,9 +131,9 @@ class UpdateView(LoginRequiredMixin, UpdateView):
             profile.user = user
             profile_form.save()
             user_form.save()
-            # prev_group.user_set.remove(profile.user)
-            # my_group = Group.objects.get(name=profile.role) 
-            # my_group.user_set.add(profile.user)
+            prev_group.user_set.remove(profile.user)
+            my_group = Group.objects.get(name=profile.role) 
+            my_group.user_set.add(profile.user)
         else:
             return render(request, 'users/update.html',
                           {'profileform': profile_form, 'userform': user_form, 'post_id': post.id, })
@@ -210,13 +210,16 @@ class UpdateRole(LoginRequiredMixin, View):
             post = Roles.objects.get(id=kwargs.get('post_id'))
         except Roles.DoesNotExist:
             raise Http404
-        # update_group=Group.objects.get(name=post)
+        try:
+            update_group=Group.objects.get(name=post)
+        except Group.DoesNotExist:
+            raise Http404
         role_form = Rolesform(request.POST, instance=post)
-
+        print(update_group)
         if role_form.is_valid():
-            # new_group_name=role_form.cleaned_data['role']
-            # update_group.name=new_group_name
-            # update_group.save()
+            new_group_name=role_form.cleaned_data['role']
+            update_group.name=new_group_name
+            update_group.save()
             role_form.save()
         else:
             return render(request, 'roles/updaterole.html', {'roleform': role_form, 'post_id': post.id, })
