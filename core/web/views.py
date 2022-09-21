@@ -33,7 +33,7 @@ class UserLoginView(View):
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(username=username, password=password)
-        if user is not None:
+        if user:
             login(request, user)
             return redirect('index')
         else:
