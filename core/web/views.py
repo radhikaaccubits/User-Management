@@ -33,7 +33,7 @@ class UserLoginView(View):
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(username=username, password=password)
-        if user is not None:
+        if user:
             login(request, user)
             return redirect('index')
         else:
@@ -264,7 +264,7 @@ class DeleteRole(LoginRequiredMixin, View):
 
 class CreateRole(LoginRequiredMixin, View):
     def get(self, request):
-        roleform = Rolesform(initial={'parent': 123})
+        roleform = Rolesform()
         return render(request, 'roles/createrole.html', {
             'roleform': roleform, })
 
