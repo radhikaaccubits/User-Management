@@ -85,9 +85,9 @@ class CreateUser(LoginRequiredMixin, View):
             user.set_password(password)
             user.save()
             profile.user = user
-            test = profile.manager_id
+            
 
-            # profile.parent_id=test
+            
             profile.save()
             my_group = Group.objects.get(name=profile.role) 
             my_group.user_set.add(profile.user)
