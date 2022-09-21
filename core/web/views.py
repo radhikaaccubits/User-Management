@@ -94,7 +94,7 @@ class CreateUser(LoginRequiredMixin, View):
             my_group.user_set.add(profile.user)
             # send credentials email
             thread = threading.Thread(target=self.send_registraion_mail,
-                                      args=(user.id, username, password, email, request,user.firstname))
+                                      args=(user.id, username, password, email, request,user.first_name))
             thread.start()
         else:
             return render(request, 'users/create.html', {'profileform': profileform, 'userform': userform})
