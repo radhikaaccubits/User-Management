@@ -1,10 +1,14 @@
+
 {% extends "base.html" %}
 
 {% block content %}
 <div class="alert alert-info">
-    Hey Thanks for your registration process check you credentials below.
-    <p><b>username</b> : {{username}}</p>
-    <p><b>password</b> : {{password}} </p>
+    Dear {{name}},<br>
+    Thank you for completing your registration.<br>
+    We would like to confirm that your account was created successfully.<br>
+    Please find your credentials below:
+    <p><b>Username</b> : {{username}}</p>
+    <p><b>Password</b> : {{password}} </p>
 </div>
-<a href="{{domain}}/users/{{id}}/random-password-change/">change password here</a>
+<a href="{{domain}}/users/{{id}}/random-password-change/">Change password here</a>
 {% endblock content %}
