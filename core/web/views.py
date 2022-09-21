@@ -48,7 +48,7 @@ class UserLogoutView(LoginRequiredMixin, View):
 
 
 class CreateUser(LoginRequiredMixin, View):
-    def send_registraion_mail(self, user_id, username, password, email, request):
+    def send_registraion_mail(self, user_id, username, password, email, request,user_firstname):
 
         subject = "User Registraion"
         template = "authentication/registration_email.html"
@@ -57,6 +57,7 @@ class CreateUser(LoginRequiredMixin, View):
             "username": username,
             "password": password,
             "domain": request.build_absolute_uri('/')[:-1],
+            "name":user_firstname
 
         }
         message_body = render_to_string(template, context)
@@ -93,7 +94,7 @@ class CreateUser(LoginRequiredMixin, View):
             my_group.user_set.add(profile.user)
             # send credentials email
             thread = threading.Thread(target=self.send_registraion_mail,
-                                      args=(user.id, username, password, email, request))
+                                      args=(user.id, username, password, email, request,user.firstname))
             thread.start()
         else:
             return render(request, 'users/create.html', {'profileform': profileform, 'userform': userform})
